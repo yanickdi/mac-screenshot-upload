@@ -16,8 +16,7 @@ def copy2clip(txt):
 def upload_file(filename, url, key):
     curl = check_output(['curl', '-s', '-F', f'file=@{filename}', '--header', f'X-Key: {key}', url])
     url = curl.decode('utf-8')
-    print(url);
-    sys.exit()
+    print(url)
     copy2clip(url)
 
 

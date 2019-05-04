@@ -3,13 +3,11 @@
 
     require_once('.settings.php');
 
-    function getUrl($sub_file){
-        if (substr( $sub_file, 0, 1) == '/'){
-            $sub_file = substr($sub_file, 1, strlen($sub_file));
+    function getUrl($base_url, $file){
+        if (substr( $file, 0, 1) == '/'){
+            $file = substr($file, 1, strlen($file));
         }
-        $this_url =  str_replace("\\",'/',$_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].substr(getcwd(),strlen($_SERVER['DOCUMENT_ROOT'])));
-        return $this_url . '/' . $sub_file;
-        return $sub_file;
+        return $base_url . '/' . $file;
     }
 
     if(! isset($_FILES['file'])){
@@ -30,7 +28,7 @@
     $to_file = $to_folder_abs . '/' .  $uploaded_file_name;
 
     if (move_uploaded_file($uploaded_file["tmp_name"], $to_file)) {
-        echo getUrl($to_folder_rel . '/' . $uploaded_file_name);
+        echo getUrl($settings['url_to_upload_dir'], $to_folder_rel . '/' . $uploaded_file_name);
     } else {
         exit("ERROR: Could not save uploaded file on the server");
     }
