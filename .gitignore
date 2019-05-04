@@ -1,1 +1,4 @@
 .idea/*
+client/.settings.json
+server/.settings.php
+server/uploads
