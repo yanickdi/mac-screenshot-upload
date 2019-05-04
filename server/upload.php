@@ -1,6 +1,8 @@
 <?php
     error_reporting(E_ALL & ~E_NOTICE);
 
+    require_once('.settings.php');
+
     function getUrl($sub_file){
         if (substr( $sub_file, 0, 1) == '/'){
             $sub_file = substr($sub_file, 1, strlen($sub_file));
@@ -14,9 +16,13 @@
         exit('ERROR: file not given');
     }
 
+    if (! isset($_SERVER['HTTP_X_KEY']) || $_SERVER['HTTP_X_KEY'] != $settings['key']){
+        exit('ERROR: Authentication Error');
+    }
+
     $uploaded_file = $_FILES['file'];
     $uploaded_file_name = basename($uploaded_file['name']);
-    $to_folder_rel =  '/uploads/' . date('Y-m-d') . '/' . random_int(9999999999999999, 99999999999999999);
+    $to_folder_rel =  '/'.$settings['upload_dir'].'/' . date('Y-m-d') . '/' . random_int(9999999999999999, 99999999999999999);
     $to_folder_abs = dirname(__FILE__) . $to_folder_rel;
     if (!file_exists($to_folder_abs)){
         mkdir($to_folder_abs, 0777, true);

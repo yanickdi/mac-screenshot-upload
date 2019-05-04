@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 from subprocess import check_output
 import tempfile
 from datetime import datetime
@@ -13,8 +14,10 @@ def copy2clip(txt):
 
 
 def upload_file(filename, url, key):
-    curl = check_output(['curl', '-s', '-F', f'file=@{filename}', url])
+    curl = check_output(['curl', '-s', '-F', f'file=@{filename}', '--header', f'X-Key: {key}', url])
     url = curl.decode('utf-8')
+    print(url);
+    sys.exit()
     copy2clip(url)
 
 
