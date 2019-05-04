@@ -1,21 +1,32 @@
 #!/usr/bin/env python3
 
 import os
-import subprocess
+from subprocess import check_output
 import tempfile
 from datetime import datetime
+import json
 
-def upload_file(filename, url):
-    completed_proc = subprocess.run(['curl', '-F', f'file=@{filename}', url])
-    print(completed_proc.stdout)
+
+def copy2clip(txt):
+    cmd='echo '+txt.strip()+' | pbcopy'
+    return check_output(cmd, shell=True)
+
+
+def upload_file(filename, url, key):
+    curl = check_output(['curl', '-s', '-F', f'file=@{filename}', url])
+    url = curl.decode('utf-8')
+    copy2clip(url)
+
 
 def main():
-    datestr = datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
+    settings = json.load(open('.settings.json'))
+
+    date_str = datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
     folder = tempfile.gettempdir()
-    fname = os.path.join(folder, datestr + '.png')
-    ret_code = subprocess.Popen(['screencapture', '-i', fname]).wait()
+    fname = os.path.join(folder, date_str + '.png')
+    check_output(['screencapture', '-i', fname])
     # upload
-    upload_file(fname, 'http://localhost:8080/upload.php')
+    upload_file(fname, settings['url'], settings['key'])
 
 
 if __name__ == '__main__':
