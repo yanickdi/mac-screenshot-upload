@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 from subprocess import check_output
 import tempfile
 from datetime import datetime
@@ -9,15 +8,18 @@ import json
 
 
 def copy2clip(txt):
-    cmd='echo '+txt.strip()+' | pbcopy'
+    cmd=f'echo {txt.strip()} | pbcopy'
     return check_output(cmd, shell=True)
 
 
 def upload_file(filename, url, key):
     curl = check_output(['curl', '-s', '-F', f'file=@{filename}', '--header', f'X-Key: {key}', url])
-    url = curl.decode('utf-8')
-    print(url)
-    copy2clip(url)
+    url = curl.decode('utf-8').strip()
+    return url
+
+
+def open_url(url):
+    check_output(f'open {url}', shell=True)
 
 
 def main():
@@ -27,8 +29,10 @@ def main():
     folder = tempfile.gettempdir()
     fname = os.path.join(folder, date_str + '.png')
     check_output(['screencapture', '-i', fname])
-    # upload
-    upload_file(fname, settings['url'], settings['key'])
+
+    url = upload_file(fname, settings['url'], settings['key'])
+    copy2clip(url)
+    open_url(url)
 
 
 if __name__ == '__main__':
