@@ -2,5 +2,5 @@
 
 source dev/docker/conf.sh
 
-docker stop mac-screenshot-upload-server
+docker stop $DOCKER_CONTAINER_NAME
 docker container rm $DOCKER_CONTAINER_NAME
